@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neovim_version: ['v0.8.3', 'v0.9.5', 'v0.10.0', 'v0.11.3']
+        neovim_version: ['v0.8.3', 'v0.9.5', 'v0.10.0', 'v0.11.3', 'nightly']
     
     steps:
     - name: Checkout code
@@ -31,13 +31,23 @@ jobs:
             NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz"
             ;;
           "v0.11.3")
-            NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux64.tar.gz"
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.tar.gz"
+            ;;
+          "nightly")
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz"
             ;;
         esac
         
         wget -q $NVIM_URL -O /tmp/nvim.tar.gz
         tar -xzf /tmp/nvim.tar.gz -C /tmp/
-        sudo mv /tmp/nvim-linux64 /opt/nvim
+        
+        # Handle different directory names for different versions
+        if [ "${{ matrix.neovim_version }}" = "v0.11.3" ] || [ "${{ matrix.neovim_version }}" = "nightly" ]; then
+          sudo mv /tmp/nvim-linux-x86_64 /opt/nvim
+        else
+          sudo mv /tmp/nvim-linux64 /opt/nvim
+        fi
+        
         sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
         sudo chmod +x /usr/local/bin/nvim
         

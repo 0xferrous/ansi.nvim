@@ -153,6 +153,6 @@ stylua --check lua/
 
 The project uses GitHub Actions for continuous integration:
 
-- **Tests**: Runs on Neovim versions 0.8.3, 0.9.5, 0.10.0, and 0.11.3
+- **Tests**: Runs on Neovim versions 0.8.3, 0.9.5, 0.10.0, 0.11.3, and nightly
 - **Linting**: Uses luacheck for Lua code analysis
 - **Style**: Uses stylua for code formatting
