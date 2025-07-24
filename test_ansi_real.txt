@@ -1,0 +1,40 @@
+Test file for ansi.nvim plugin with real ANSI sequences
+
+=== Basic Colors ===
+[31mThis is red text[0m
+[32mThis is green text[0m  
+[33mThis is yellow text[0m
+[34mThis is blue text[0m
+[35mThis is magenta text[0m
+[36mThis is cyan text[0m
+[37mThis is white text[0m
+
+=== Bright Colors ===
+This is bright red text
+This is bright green text
+This is bright yellow text
+This is bright blue text
+This is bright magenta text
+This is bright cyan text
+This is bright white text
+
+=== Text Attributes ===
+This is bold text
+This is italic text
+This is underlined text
+This is bold and italic
+This is bold and underlined
+
+=== Combined Colors and Attributes ===
+This is bold red text
+This is italic green text
+This is underlined blue text
+Yellow text on red background
+White text on blue background
+Bold red text on green background
+
+=== Multiple sequences on one line ===
+Red Green Blue Bold Italic
+
+=== Complex example ===
+ERROR: Warning message - Success! (timestamp: 2024-01-01)

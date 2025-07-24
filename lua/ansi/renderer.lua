@@ -18,10 +18,35 @@ function M.apply_ansi_highlighting(bufnr)
     local sequences = parser.find_ansi_sequences(line)
 
     if #sequences > 0 then
-      local current_attrs = {}
-      local text_offset = 0
-
+      -- First pass: conceal all ANSI sequences
       for _, seq in ipairs(sequences) do
+        vim.api.nvim_buf_set_extmark(bufnr, M.namespace, line_num - 1, seq.start_pos - 1, {
+          end_col = seq.end_pos,
+          conceal = '',
+        })
+      end
+
+      -- Second pass: apply colors to text segments
+      local current_attrs = {}
+      local last_pos = 1
+
+      for i, seq in ipairs(sequences) do
+        -- Apply highlighting to text before this sequence
+        if seq.start_pos > last_pos and next(current_attrs) then
+          local hl_group = highlights.get_highlight_group(current_attrs)
+          if not hl_group then
+            hl_group = highlights.create_dynamic_highlight(current_attrs)
+          end
+
+          if hl_group then
+            vim.api.nvim_buf_set_extmark(bufnr, M.namespace, line_num - 1, last_pos - 1, {
+              end_col = seq.start_pos - 1,
+              hl_group = hl_group,
+            })
+          end
+        end
+
+        -- Update current attributes
         if seq.attrs.reset then
           current_attrs = {}
         else
@@ -32,40 +57,21 @@ function M.apply_ansi_highlighting(bufnr)
           end
         end
 
-        local start_col = seq.start_pos - 1 - text_offset
-        local end_col = seq.end_pos - text_offset
+        last_pos = seq.end_pos + 1
+      end
 
-        vim.api.nvim_buf_set_extmark(bufnr, M.namespace, line_num - 1, start_col, {
-          end_col = end_col,
-          conceal = '',
-        })
-
-        text_offset = text_offset + (seq.end_pos - seq.start_pos + 1)
-
-        local next_seq_start = nil
-        for i, next_seq in ipairs(sequences) do
-          if next_seq.start_pos > seq.end_pos then
-            next_seq_start = next_seq.start_pos - 1 - text_offset
-            break
-          end
+      -- Apply highlighting to remaining text after last sequence
+      if last_pos <= #line and next(current_attrs) then
+        local hl_group = highlights.get_highlight_group(current_attrs)
+        if not hl_group then
+          hl_group = highlights.create_dynamic_highlight(current_attrs)
         end
 
-        if next_seq_start == nil then
-          next_seq_start = #line - text_offset
-        end
-
-        if next_seq_start > end_col and next(current_attrs) then
-          local hl_group = highlights.get_highlight_group(current_attrs)
-          if not hl_group then
-            hl_group = highlights.create_dynamic_highlight(current_attrs)
-          end
-
-          if hl_group then
-            vim.api.nvim_buf_set_extmark(bufnr, M.namespace, line_num - 1, end_col, {
-              end_col = next_seq_start,
-              hl_group = hl_group,
-            })
-          end
+        if hl_group then
+          vim.api.nvim_buf_set_extmark(bufnr, M.namespace, line_num - 1, last_pos - 1, {
+            end_col = #line,
+            hl_group = hl_group,
+          })
         end
       end
     end
@@ -74,9 +80,14 @@ end
 
 function M.setup_syntax_matching(bufnr)
   vim.api.nvim_buf_call(bufnr, function()
-    vim.cmd('syntax match AnsiEscape /\\e\\[[0-9;]*m/ conceal')
+    -- Clear existing syntax
+    vim.cmd('syntax clear')
+    
+    -- Set concealment options
     vim.wo.conceallevel = 2
     vim.wo.concealcursor = 'nvc'
+    
+    -- We handle concealment via extmarks, not syntax
   end)
 end
 

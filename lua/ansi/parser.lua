@@ -77,12 +77,13 @@ function M.find_ansi_sequences(text)
   local start_pos = 1
 
   while true do
+    -- Look for ESC[ followed by digits/semicolons and ending with 'm'
     local esc_start, esc_end = text:find('\27%[[%d;]*m', start_pos)
     if not esc_start then
       break
     end
 
-    local sequence = text:sub(esc_start + 2, esc_end - 1)
+    local sequence = text:sub(esc_start + 2, esc_end - 1)  -- Skip ESC and [
     local attrs = M.parse_ansi_sequence(sequence)
 
     table.insert(sequences, {

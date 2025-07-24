@@ -1,0 +1,21 @@
+Testing ansi.nvim plugin
+========================
+
+[31mThis is red text[0m
+[32mThis is green text[0m
+[33mThis is yellow text[0m
+[34mThis is blue text[0m
+[35mThis is magenta text[0m
+[36mThis is cyan text[0m
+
+[1mBold text[0m
+[3mItalic text[0m
+[4mUnderlined text[0m
+
+[31;1mBold red text[0m
+[32;41mGreen text on red background[0m
+[1;4;33mBold underlined yellow text[0m
+
+Run this script and redirect output to a file:
+./test_script.sh > test_output.log
+Then open test_output.log in Neovim and run :AnsiEnable
