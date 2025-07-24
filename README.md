@@ -1,6 +1,6 @@
 # ansi.nvim
 
-[![CI](https://github.com/your-username/ansi.nvim/workflows/CI/badge.svg)](https://github.com/your-username/ansi.nvim/actions)
+[![CI](https://github.com/0xferrous/ansi.nvim/workflows/CI/badge.svg)](https://github.com/0xferrous/ansi.nvim/actions)
 
 A Neovim plugin that renders ANSI color escape codes as actual colors in buffers using concealer.
 
@@ -19,7 +19,7 @@ A Neovim plugin that renders ANSI color escape codes as actual colors in buffers
 
 ```lua
 {
-  'your-username/ansi.nvim',
+  '0xferrous/ansi.nvim',
   config = function()
     require('ansi').setup({
       auto_enable = false,  -- Auto-enable for configured filetypes
@@ -33,11 +33,26 @@ A Neovim plugin that renders ANSI color escape codes as actual colors in buffers
 
 ```lua
 use {
-  'your-username/ansi.nvim',
+  '0xferrous/ansi.nvim',
   config = function()
     require('ansi').setup()
   end
 }
+```
+
+### Using [vim-plug](https://github.com/junegunn/vim-plug)
+
+```vim
+Plug '0xferrous/ansi.nvim'
+
+" In your init.lua or vimrc:
+lua require('ansi').setup()
+```
+
+### Manual Installation
+
+```bash
+git clone https://github.com/0xferrous/ansi.nvim.git ~/.local/share/nvim/site/pack/plugins/start/ansi.nvim
 ```
 
 ## Usage
