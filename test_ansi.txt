@@ -1,0 +1,49 @@
+Test file for ansi.nvim plugin
+
+=== Basic Colors ===
+[31mRed text[0m
+[32mGreen text[0m
+[33mYellow text[0m
+[34mBlue text[0m
+[35mMagenta text[0m
+[36mCyan text[0m
+[37mWhite text[0m
+
+=== Bright Colors ===
+[91mBright red text[0m
+[92mBright green text[0m
+[93mBright yellow text[0m
+[94mBright blue text[0m
+[95mBright magenta text[0m
+[96mBright cyan text[0m
+[97mBright white text[0m
+
+=== Background Colors ===
+[41mRed background[0m
+[42mGreen background[0m
+[43mYellow background[0m
+[44mBlue background[0m
+[45mMagenta background[0m
+[46mCyan background[0m
+[47mWhite background[0m
+
+=== Text Attributes ===
+[1mBold text[0m
+[3mItalic text[0m
+[4mUnderlined text[0m
+[1;3mBold and italic[0m
+[1;4mBold and underlined[0m
+
+=== Combined Colors and Attributes ===
+[31;1mBold red text[0m
+[32;3mItalic green text[0m
+[34;4mUnderlined blue text[0m
+[33;41mYellow text on red background[0m
+[97;44mWhite text on blue background[0m
+[1;31;42mBold red text on green background[0m
+
+=== Multiple sequences on one line ===
+[31mRed[0m [32mGreen[0m [34mBlue[0m [1mBold[0m [3mItalic[0m
+
+=== Complex example ===
+[1;31mERROR:[0m [33mWarning message[0m - [32mSuccess![0m [90m(timestamp: 2024-01-01)[0m

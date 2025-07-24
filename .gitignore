@@ -1,0 +1,58 @@
+# Neovim specific
+.nvimrc
+.exrc
+
+# Vim swap files
+*.swp
+*.swo
+*~
+
+# Vim session files
+Session.vim
+.session
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Linux
+*~
+
+# Log files
+*.log
+
+# Test output files
+test_output.log
+git_log.txt
+ls_output.txt
+test_render.txt
+
+# Coverage reports (if using luacov)
+luacov.*.out
+luacov.stats.out
+luacov.report.out
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Node modules (if using any JS tooling)
+node_modules/
+
+# Python cache (if using any Python tooling)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Lua compiled files
+*.luac

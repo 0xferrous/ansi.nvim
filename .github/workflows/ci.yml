@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        neovim_version: ['v0.8.3', 'v0.9.5', 'v0.10.0', 'nightly']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install Neovim
+      run: |
+        case ${{ matrix.neovim_version }} in
+          "v0.8.3")
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.8.3/nvim-linux64.tar.gz"
+            ;;
+          "v0.9.5")
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz"
+            ;;
+          "v0.10.0")
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz"
+            ;;
+          "nightly")
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
+            ;;
+        esac
+        
+        wget -q $NVIM_URL -O /tmp/nvim.tar.gz
+        tar -xzf /tmp/nvim.tar.gz -C /tmp/
+        sudo mv /tmp/nvim-linux64 /opt/nvim
+        sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+        sudo chmod +x /usr/local/bin/nvim
+        
+    - name: Run tests
+      run: |
+        nvim --version
+        nvim --headless -c "luafile tests/run_tests.lua" -c "qa!"
+        
+    - name: Test plugin loading
+      run: |
+        # Test that the plugin can be loaded without errors
+        nvim --headless -c "set runtimepath+=." -c "lua require('ansi')" -c "qa!" || exit 1
+        echo "Plugin loaded successfully"
+        
+    - name: Test ANSI rendering
+      run: |
+        # Create a test file with ANSI codes and verify it doesn't crash
+        echo -e "\033[31mRed text\033[0m" > test_render.txt
+        nvim --headless test_render.txt -c "set runtimepath+=." -c "runtime plugin/ansi.lua" -c "AnsiEnable" -c "qa!" || exit 1
+        echo "ANSI rendering test passed"
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install Lua and luacheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lua5.3 lua5.3-dev luarocks build-essential
+        sudo luarocks install luacheck
+        
+    - name: Run luacheck
+      run: |
+        luacheck lua/ --globals vim
+        
+  style:
+    name: Style Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install stylua
+      uses: JohnnyMorganz/stylua-action@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        version: latest
+        args: --check lua/
