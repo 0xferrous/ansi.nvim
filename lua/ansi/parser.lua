@@ -83,7 +83,7 @@ function M.find_ansi_sequences(text)
       break
     end
 
-    local sequence = text:sub(esc_start + 2, esc_end - 1)  -- Skip ESC and [
+    local sequence = text:sub(esc_start + 2, esc_end - 1) -- Skip ESC and [
     local attrs = M.parse_ansi_sequence(sequence)
 
     table.insert(sequences, {

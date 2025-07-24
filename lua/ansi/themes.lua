@@ -102,22 +102,22 @@ M.onedark = {
 
 -- Gruvbox Dark colors (the ones used by bat and most terminals)
 M.gruvbox = {
-  black = '#282828',         -- bg0
-  red = '#cc241d',           -- neutral_red
-  green = '#98971a',         -- neutral_green
-  yellow = '#d79921',        -- neutral_yellow
-  blue = '#458588',          -- neutral_blue
-  magenta = '#b16286',       -- neutral_purple
-  cyan = '#689d6a',          -- neutral_aqua
-  white = '#a89984',         -- fg4
-  bright_black = '#928374',  -- gray
-  bright_red = '#fb4934',    -- bright_red
-  bright_green = '#b8bb26',  -- bright_green
+  black = '#282828', -- bg0
+  red = '#cc241d', -- neutral_red
+  green = '#98971a', -- neutral_green
+  yellow = '#d79921', -- neutral_yellow
+  blue = '#458588', -- neutral_blue
+  magenta = '#b16286', -- neutral_purple
+  cyan = '#689d6a', -- neutral_aqua
+  white = '#a89984', -- fg4
+  bright_black = '#928374', -- gray
+  bright_red = '#fb4934', -- bright_red
+  bright_green = '#b8bb26', -- bright_green
   bright_yellow = '#fabd2f', -- bright_yellow
-  bright_blue = '#83a598',   -- bright_blue
+  bright_blue = '#83a598', -- bright_blue
   bright_magenta = '#d3869b', -- bright_purple
-  bright_cyan = '#8ec07c',   -- bright_aqua
-  bright_white = '#ebdbb2',  -- fg0
+  bright_cyan = '#8ec07c', -- bright_aqua
+  bright_white = '#ebdbb2', -- fg0
 }
 
 -- Gruvbox Dark is the same as gruvbox
@@ -125,35 +125,35 @@ M.gruvbox_dark = M.gruvbox
 
 -- Gruvbox Light colors
 M.gruvbox_light = {
-  black = '#fbf1c7',         -- bg0 (light)
-  red = '#cc241d',           -- neutral_red (same)
-  green = '#98971a',         -- neutral_green (same)
-  yellow = '#d79921',        -- neutral_yellow (same)
-  blue = '#458588',          -- neutral_blue (same)
-  magenta = '#b16286',       -- neutral_purple (same)
-  cyan = '#689d6a',          -- neutral_aqua (same)
-  white = '#7c6f64',         -- fg4 (dark on light)
-  bright_black = '#928374',  -- gray (same)
-  bright_red = '#9d0006',    -- bright_red (darker for light bg)
-  bright_green = '#79740e',  -- bright_green (darker for light bg)
+  black = '#fbf1c7', -- bg0 (light)
+  red = '#cc241d', -- neutral_red (same)
+  green = '#98971a', -- neutral_green (same)
+  yellow = '#d79921', -- neutral_yellow (same)
+  blue = '#458588', -- neutral_blue (same)
+  magenta = '#b16286', -- neutral_purple (same)
+  cyan = '#689d6a', -- neutral_aqua (same)
+  white = '#7c6f64', -- fg4 (dark on light)
+  bright_black = '#928374', -- gray (same)
+  bright_red = '#9d0006', -- bright_red (darker for light bg)
+  bright_green = '#79740e', -- bright_green (darker for light bg)
   bright_yellow = '#b57614', -- bright_yellow (darker for light bg)
-  bright_blue = '#076678',   -- bright_blue (darker for light bg)
+  bright_blue = '#076678', -- bright_blue (darker for light bg)
   bright_magenta = '#8f3f71', -- bright_purple (darker for light bg)
-  bright_cyan = '#427b58',   -- bright_aqua (darker for light bg)
-  bright_white = '#3c3836',  -- fg0 (darkest on light)
+  bright_cyan = '#427b58', -- bright_aqua (darker for light bg)
+  bright_white = '#3c3836', -- fg0 (darkest on light)
 }
 
 -- Get terminal's actual colors if possible
 function M.get_terminal_colors()
   local colors = {}
-  
+
   -- Try to read from terminal
   for i = 0, 15 do
     local hl = vim.api.nvim_get_hl(0, { name = string.format('Terminal%d', i) })
     if hl.fg then
       local color_name = ({
         [0] = 'black',
-        [1] = 'red', 
+        [1] = 'red',
         [2] = 'green',
         [3] = 'yellow',
         [4] = 'blue',
@@ -169,17 +169,19 @@ function M.get_terminal_colors()
         [14] = 'bright_cyan',
         [15] = 'bright_white',
       })[i]
-      
+
       if color_name then
         colors[color_name] = string.format('#%06x', hl.fg)
       end
     end
   end
-  
+
   -- Return colors if we got all 16, otherwise return nil
   local count = 0
-  for _, _ in pairs(colors) do count = count + 1 end
-  
+  for _, _ in pairs(colors) do
+    count = count + 1
+  end
+
   return count == 16 and colors or nil
 end
 

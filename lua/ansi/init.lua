@@ -5,7 +5,9 @@ local M = {}
 M.config = {
   auto_enable = false,
   filetypes = { 'log', 'ansi' },
-  theme = 'gruvbox', -- Options: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark', 'gruvbox', 'gruvbox_dark', 'gruvbox_light', 'terminal'
+  -- Options: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark',
+  -- 'gruvbox', 'gruvbox_dark', 'gruvbox_light', 'terminal'
+  theme = 'gruvbox',
 }
 
 function M.setup(opts)

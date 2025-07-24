@@ -82,11 +82,11 @@ function M.setup_syntax_matching(bufnr)
   vim.api.nvim_buf_call(bufnr, function()
     -- Clear existing syntax
     vim.cmd('syntax clear')
-    
+
     -- Set concealment options
     vim.wo.conceallevel = 2
     vim.wo.concealcursor = 'nvc'
-    
+
     -- We handle concealment via extmarks, not syntax
   end)
 end

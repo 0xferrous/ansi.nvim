@@ -8,7 +8,7 @@ M.current_theme = nil
 function M.setup_highlight_groups(theme_name)
   -- Clear existing highlight groups
   M.highlight_groups = {}
-  
+
   -- Get color map based on theme
   local color_map
   if theme_name == 'terminal' then
@@ -24,9 +24,9 @@ function M.setup_highlight_groups(theme_name)
     -- Default to modern theme
     color_map = themes.modern
   end
-  
+
   M.current_theme = color_map
-  
+
   -- Create foreground highlight groups
   for fg_name, fg_hex in pairs(color_map) do
     local group_name = 'AnsiFg' .. fg_name:gsub('_', '')
