@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neovim_version: ['v0.8.3', 'v0.9.5', 'v0.10.0', 'nightly']
+        neovim_version: ['v0.8.3', 'v0.9.5', 'v0.10.0', 'v0.11.3']
     
     steps:
     - name: Checkout code
@@ -30,8 +30,8 @@ jobs:
           "v0.10.0")
             NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz"
             ;;
-          "nightly")
-            NVIM_URL="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
+          "v0.11.3")
+            NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux64.tar.gz"
             ;;
         esac
         
