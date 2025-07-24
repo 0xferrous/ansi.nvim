@@ -91,10 +91,10 @@ function M.setup_syntax_matching(bufnr)
   end)
 end
 
-function M.enable_for_buffer(bufnr)
+function M.enable_for_buffer(bufnr, theme)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
 
-  highlights.setup_highlight_groups()
+  highlights.setup_highlight_groups(theme)
   M.setup_syntax_matching(bufnr)
   M.apply_ansi_highlighting(bufnr)
 

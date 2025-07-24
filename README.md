@@ -89,8 +89,23 @@ require('ansi').setup({
   
   -- Filetypes to auto-enable when auto_enable is true
   filetypes = { 'log', 'ansi' },
+  
+  -- Color theme: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark', 'gruvbox', 'terminal'
+  theme = 'gruvbox',
 })
 ```
+
+### Color Themes
+
+- `'classic'` - Traditional ANSI colors (muted, original)
+- `'modern'` - Modern terminal colors (vibrant, like Windows Terminal)
+- `'catppuccin'` - Soft pastel colors
+- `'dracula'` - Dracula theme colors
+- `'onedark'` - One Dark theme colors
+- `'gruvbox'` - Gruvbox dark colors (like bat uses)
+- `'gruvbox_dark'` - Same as 'gruvbox'
+- `'gruvbox_light'` - Gruvbox light variant
+- `'terminal'` - Try to use your terminal's actual colors
 
 ## Supported ANSI Codes
 

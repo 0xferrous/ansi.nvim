@@ -1,41 +1,47 @@
+local themes = require('ansi.themes')
+
 local M = {}
 
 M.highlight_groups = {}
+M.current_theme = nil
 
-local color_map = {
-  black = '#000000',
-  red = '#cd0000',
-  green = '#00cd00',
-  yellow = '#cdcd00',
-  blue = '#0000ee',
-  magenta = '#cd00cd',
-  cyan = '#00cdcd',
-  white = '#e5e5e5',
-  bright_black = '#7f7f7f',
-  bright_red = '#ff0000',
-  bright_green = '#00ff00',
-  bright_yellow = '#ffff00',
-  bright_blue = '#5c5cff',
-  bright_magenta = '#ff00ff',
-  bright_cyan = '#00ffff',
-  bright_white = '#ffffff',
-}
-
-function M.setup_highlight_groups()
-  for _, fg_color in pairs(color_map) do
-    for fg_name, fg_hex in pairs(color_map) do
-      local group_name = 'AnsiFg' .. fg_name:gsub('_', '')
-      vim.api.nvim_set_hl(0, group_name, { fg = fg_hex })
-      M.highlight_groups[fg_name] = group_name
+function M.setup_highlight_groups(theme_name)
+  -- Clear existing highlight groups
+  M.highlight_groups = {}
+  
+  -- Get color map based on theme
+  local color_map
+  if theme_name == 'terminal' then
+    -- Try to use terminal's actual colors
+    color_map = themes.get_terminal_colors()
+    if not color_map then
+      -- Fallback to modern if terminal colors not available
+      color_map = themes.modern
     end
-
-    for bg_name, bg_hex in pairs(color_map) do
-      local group_name = 'AnsiBg' .. bg_name:gsub('_', '')
-      vim.api.nvim_set_hl(0, group_name, { bg = bg_hex })
-      M.highlight_groups['bg_' .. bg_name] = group_name
-    end
+  elseif themes[theme_name] then
+    color_map = themes[theme_name]
+  else
+    -- Default to modern theme
+    color_map = themes.modern
+  end
+  
+  M.current_theme = color_map
+  
+  -- Create foreground highlight groups
+  for fg_name, fg_hex in pairs(color_map) do
+    local group_name = 'AnsiFg' .. fg_name:gsub('_', '')
+    vim.api.nvim_set_hl(0, group_name, { fg = fg_hex })
+    M.highlight_groups[fg_name] = group_name
   end
 
+  -- Create background highlight groups
+  for bg_name, bg_hex in pairs(color_map) do
+    local group_name = 'AnsiBg' .. bg_name:gsub('_', '')
+    vim.api.nvim_set_hl(0, group_name, { bg = bg_hex })
+    M.highlight_groups['bg_' .. bg_name] = group_name
+  end
+
+  -- Create combined fg/bg highlight groups
   for fg_name, fg_hex in pairs(color_map) do
     for bg_name, bg_hex in pairs(color_map) do
       local group_name = 'AnsiFg' .. fg_name:gsub('_', '') .. 'Bg' .. bg_name:gsub('_', '')
@@ -44,6 +50,7 @@ function M.setup_highlight_groups()
     end
   end
 
+  -- Text attribute groups
   vim.api.nvim_set_hl(0, 'AnsiBold', { bold = true })
   vim.api.nvim_set_hl(0, 'AnsiItalic', { italic = true })
   vim.api.nvim_set_hl(0, 'AnsiUnderline', { underline = true })
@@ -64,11 +71,11 @@ end
 function M.create_dynamic_highlight(attrs)
   local hl_def = {}
 
-  if attrs.fg then
-    hl_def.fg = color_map[attrs.fg]
+  if attrs.fg and M.current_theme then
+    hl_def.fg = M.current_theme[attrs.fg]
   end
-  if attrs.bg then
-    hl_def.bg = color_map[attrs.bg]
+  if attrs.bg and M.current_theme then
+    hl_def.bg = M.current_theme[attrs.bg]
   end
   if attrs.bold then
     hl_def.bold = true

@@ -5,6 +5,7 @@ local M = {}
 M.config = {
   auto_enable = false,
   filetypes = { 'log', 'ansi' },
+  theme = 'gruvbox', -- Options: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark', 'gruvbox', 'gruvbox_dark', 'gruvbox_light', 'terminal'
 }
 
 function M.setup(opts)
@@ -22,7 +23,7 @@ end
 
 function M.enable(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  renderer.enable_for_buffer(bufnr)
+  renderer.enable_for_buffer(bufnr, M.config.theme)
 end
 
 function M.disable(bufnr)
