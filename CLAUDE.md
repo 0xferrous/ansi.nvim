@@ -34,3 +34,7 @@ The plugin is structured in modular components:
 - The concealer approach hides escape sequences while preserving text positioning
 - Extmarks are used for both concealing sequences and applying highlights
 - Color parsing supports codes 30-37, 40-47, 90-97, 100-107 plus attributes 0,1,3,4
+
+## Development Workflow
+
+- Always run the linting, testing, and style check CI locally with `act` or directly before considering a task finished
