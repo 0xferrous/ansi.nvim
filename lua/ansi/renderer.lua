@@ -91,11 +91,43 @@ function M.setup_syntax_matching(bufnr)
   end)
 end
 
+-- Custom fold text function that strips ANSI sequences
+function M.clean_fold_text()
+  local line = vim.fn.getline(vim.v.foldstart)
+  -- Remove ANSI escape sequences from fold text
+  local clean_line = line:gsub('\27%[[%d;]*m', '')
+  local line_count = vim.v.foldend - vim.v.foldstart + 1
+  return clean_line .. ' (' .. line_count .. ' lines)'
+end
+
+function M.setup_fold_handling(bufnr)
+  vim.api.nvim_buf_call(bufnr, function()
+    -- Only set custom fold text if no fold plugin is already active
+    local current_foldtext = vim.wo.foldtext
+    if current_foldtext == '' or current_foldtext == 'foldtext()' then
+      -- Set custom fold text function to strip ANSI codes
+      vim.wo.foldtext = 'v:lua.require("ansi.renderer").clean_fold_text()'
+    else
+      -- If another fold plugin is active, we'll use a different approach
+      -- by creating an autocmd to clean fold text dynamically
+      vim.api.nvim_create_autocmd('CursorMoved', {
+        buffer = bufnr,
+        callback = function()
+          -- This is a placeholder for future fold text cleaning when other plugins are active
+          -- For now, we'll just let the other plugin handle folding
+        end,
+        desc = 'ANSI fold text compatibility'
+      })
+    end
+  end)
+end
+
 function M.enable_for_buffer(bufnr, theme)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
 
   highlights.setup_highlight_groups(theme)
   M.setup_syntax_matching(bufnr)
+  M.setup_fold_handling(bufnr)
   M.apply_ansi_highlighting(bufnr)
 
   vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
@@ -113,6 +145,8 @@ function M.disable_for_buffer(bufnr)
   M.clear_buffer_highlights(bufnr)
   vim.api.nvim_buf_call(bufnr, function()
     vim.wo.conceallevel = 0
+    -- Reset fold text to default
+    vim.wo.foldtext = ''
   end)
 end
 

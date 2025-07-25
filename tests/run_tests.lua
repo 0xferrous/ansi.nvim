@@ -78,10 +78,37 @@ local function run_parser_tests()
   print("Failed: " .. failed)
   
   if failed > 0 then
-    os.exit(1)
+    print("Parser tests failed!")
+    return false
   else
-    print("All tests passed!")
+    print("All parser tests passed!")
+    return true
   end
 end
 
-run_parser_tests()
+-- Run parser tests
+local parser_success = run_parser_tests()
+
+-- Run fold tests
+print("\n" .. string.rep("=", 50))
+local fold_success = false
+local fold_test_ok, fold_err = pcall(function()
+  dofile('tests/test_fold_simple.lua')
+  fold_success = true
+end)
+
+if not fold_test_ok then
+  print("Fold tests failed to run: " .. tostring(fold_err))
+  fold_success = false
+end
+
+print("\n" .. string.rep("=", 50))
+print("=== Final Results ===")
+if parser_success and fold_success then
+  print("✓ All tests passed!")
+else
+  print("✗ Some tests failed")
+  print("  Parser tests: " .. (parser_success and "PASS" or "FAIL"))
+  print("  Fold tests: " .. (fold_success and "PASS" or "FAIL"))
+  os.exit(1)
+end
