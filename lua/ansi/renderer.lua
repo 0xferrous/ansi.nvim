@@ -116,7 +116,7 @@ function M.setup_fold_handling(bufnr)
           -- This is a placeholder for future fold text cleaning when other plugins are active
           -- For now, we'll just let the other plugin handle folding
         end,
-        desc = 'ANSI fold text compatibility'
+        desc = 'ANSI fold text compatibility',
       })
     end
   end)
