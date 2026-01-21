@@ -49,11 +49,11 @@ function M.apply_ansi_highlighting(bufnr)
         -- Update current attributes
         if seq.attrs.reset then
           current_attrs = {}
-        else
-          for k, v in pairs(seq.attrs) do
-            if k ~= 'reset' and v then
-              current_attrs[k] = v
-            end
+        end
+
+        for k, v in pairs(seq.attrs) do
+          if k ~= 'reset' and v then
+            current_attrs[k] = v
           end
         end
 

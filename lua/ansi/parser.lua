@@ -55,7 +55,14 @@ function M.parse_ansi_sequence(sequence)
 
   for _, code in ipairs(codes) do
     if code == 0 then
-      attrs.reset = true
+      attrs = {
+        fg = nil,
+        bg = nil,
+        bold = false,
+        italic = false,
+        underline = false,
+        reset = true,
+      }
     elseif code == 1 then
       attrs.bold = true
     elseif code == 3 then
