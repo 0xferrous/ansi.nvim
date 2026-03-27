@@ -69,6 +69,10 @@ function M.parse_ansi_sequence(sequence)
       attrs.italic = true
     elseif code == 4 then
       attrs.underline = true
+    elseif code == 39 then
+      attrs.fg = '__reset__'
+    elseif code == 49 then
+      attrs.bg = '__reset__'
     elseif M.colors[code] then
       attrs.fg = M.colors[code]
     elseif M.bg_colors[code] then
