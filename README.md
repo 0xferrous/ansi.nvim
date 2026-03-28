@@ -4,6 +4,10 @@
 
 A Neovim plugin that renders ANSI color escape codes as actual colors in buffers using concealer.
 
+![ansi.nvim demo](./demo.png)
+
+Demo shown using [`./test_ansi_real.txt`](./test_ansi_real.txt).
+
 ## Features
 
 - Renders ANSI escape sequences as actual colors
