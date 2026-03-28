@@ -49,6 +49,28 @@ local function run_parser_tests()
     assert(attrs.fg == 'red', "Should parse red foreground")
     assert(attrs.bg == 'green', "Should parse green background")
   end)
+
+  test("parse foreground reset code", function()
+    local attrs = parser.parse_ansi_sequence('39')
+    assert(attrs.fg == '__reset__', "Should parse foreground reset code")
+  end)
+
+  test("parse background reset code", function()
+    local attrs = parser.parse_ansi_sequence('49')
+    assert(attrs.bg == '__reset__', "Should parse background reset code")
+  end)
+
+  test("parse combined codes with foreground reset", function()
+    local attrs = parser.parse_ansi_sequence('33;41;39')
+    assert(attrs.fg == '__reset__', "Should reset foreground")
+    assert(attrs.bg == 'red', "Should preserve red background")
+  end)
+
+  test("parse combined codes with background reset", function()
+    local attrs = parser.parse_ansi_sequence('33;41;49')
+    assert(attrs.fg == 'yellow', "Should preserve yellow foreground")
+    assert(attrs.bg == '__reset__', "Should reset background")
+  end)
   
   -- Test find_ansi_sequences
   test("find single sequence", function()
@@ -65,6 +87,17 @@ local function run_parser_tests()
     assert(#sequences == 4, "Should find 4 sequences")
     assert(sequences[1].attrs.fg == 'red', "Should find red")
     assert(sequences[3].attrs.fg == 'green', "Should find green")
+  end)
+
+  test("find partial reset sequences", function()
+    local text = '\27[33;41mYellow on red\27[39m default fg\27[49m default bg\27[0m'
+    local sequences = parser.find_ansi_sequences(text)
+    assert(#sequences == 4, "Should find 4 sequences")
+    assert(sequences[1].attrs.fg == 'yellow', "Should find yellow foreground")
+    assert(sequences[1].attrs.bg == 'red', "Should find red background")
+    assert(sequences[2].attrs.fg == '__reset__', "Should find foreground reset")
+    assert(sequences[3].attrs.bg == '__reset__', "Should find background reset")
+    assert(sequences[4].attrs.reset == true, "Should find final reset")
   end)
   
   test("handle plain text", function()
