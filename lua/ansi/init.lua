@@ -35,7 +35,7 @@ end
 
 function M.toggle(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  local conceallevel = vim.api.nvim_buf_get_option(bufnr, 'conceallevel')
+  local conceallevel = vim.wo.conceallevel
 
   if conceallevel > 0 then
     M.disable(bufnr)
