@@ -16,7 +16,7 @@ Demo shown using [`./test_ansi_real.txt`](./test_ansi_real.txt).
 - Supports text attributes (bold, italic, underline)
 - Real-time highlighting updates as you edit
 - Configurable auto-enable for specific filetypes
-- Optional auto-enable for content read from stdin
+- Auto-enable for content read from stdin by default
 
 ## Installation
 
@@ -28,7 +28,7 @@ Demo shown using [`./test_ansi_real.txt`](./test_ansi_real.txt).
   config = function()
     require('ansi').setup({
       auto_enable = false,        -- Auto-enable for configured filetypes
-      auto_enable_stdin = false,  -- Auto-enable for piped stdin content
+      auto_enable_stdin = true,   -- Auto-enable for piped stdin content
       filetypes = { 'log', 'ansi' },
     })
   end
@@ -96,7 +96,7 @@ require('ansi').setup({
 
   -- Automatically enable when buffer content was read from stdin
   -- Useful for commands like: cat file.log | nvim -
-  auto_enable_stdin = false,
+  auto_enable_stdin = true,
 
   -- Filetypes to auto-enable when auto_enable is true
   filetypes = { 'log', 'ansi' },
@@ -108,7 +108,7 @@ require('ansi').setup({
 
 ### `auto_enable_stdin`
 
-Set `auto_enable_stdin = true` to automatically enable ANSI rendering for buffers populated from stdin.
+`auto_enable_stdin` defaults to `true`, so ANSI rendering is automatically enabled for buffers populated from stdin.
 
 Example:
 
@@ -116,15 +116,15 @@ Example:
 printf '\033[31mred\033[0m\n' | nvim -
 ```
 
-With this config:
+This can be disabled with:
 
 ```lua
 require('ansi').setup({
-  auto_enable_stdin = true,
+  auto_enable_stdin = false,
 })
 ```
 
-ANSI rendering will be enabled automatically after Neovim finishes reading stdin.
+When enabled, ANSI rendering is activated automatically after Neovim finishes reading stdin.
 
 ### Color Themes
 

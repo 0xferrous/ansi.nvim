@@ -4,7 +4,7 @@ local M = {}
 
 M.config = {
   auto_enable = false,
-  auto_enable_stdin = false,
+  auto_enable_stdin = true,
   filetypes = { 'log', 'ansi' },
   -- Options: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark',
   -- 'gruvbox', 'gruvbox_dark', 'gruvbox_light', 'terminal'
