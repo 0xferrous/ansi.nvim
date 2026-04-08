@@ -98,7 +98,9 @@ function M.enable_for_buffer(bufnr, theme)
   M.setup_syntax_matching(bufnr)
   M.apply_ansi_highlighting(bufnr)
 
+  local group = vim.api.nvim_create_augroup('AnsiColors_' .. bufnr, { clear = true })
   vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+    group = group,
     buffer = bufnr,
     callback = function()
       vim.defer_fn(function()
@@ -111,6 +113,7 @@ end
 function M.disable_for_buffer(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   M.clear_buffer_highlights(bufnr)
+  pcall(vim.api.nvim_clear_autocmds, { group = 'AnsiColors_' .. bufnr })
   vim.api.nvim_buf_call(bufnr, function()
     vim.wo.conceallevel = 0
   end)
