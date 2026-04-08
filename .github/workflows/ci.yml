@@ -51,11 +51,13 @@ jobs:
         sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
         sudo chmod +x /usr/local/bin/nvim
         
+    - name: Install just
+      uses: taiki-e/install-action@just
+
     - name: Run tests
       run: |
         nvim --version
-        nvim --headless -c "luafile tests/run_tests.lua" -c "qa!"
-        nvim --headless -c "luafile tests/init_spec.lua" -c "qa!"
+        just test
         
     - name: Test plugin loading
       run: |

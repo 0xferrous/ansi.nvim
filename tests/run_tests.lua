@@ -1,120 +1,22 @@
--- Simple test runner for ansi.nvim
+-- Unified test runner for ansi.nvim
 -- Run with: nvim --headless -c "luafile tests/run_tests.lua" -c "qa"
 
-local function run_parser_tests()
-  print("Running ANSI Parser Tests...")
-  
-  -- Add the lua directory to package.path so we can require our modules
-  package.path = package.path .. ";./lua/?.lua"
-  
-  local parser = require('ansi.parser')
-  local passed = 0
-  local failed = 0
-  
-  local function test(name, fn)
-    local success, err = pcall(fn)
-    if success then
-      print("✓ " .. name)
-      passed = passed + 1
-    else
-      print("✗ " .. name .. ": " .. tostring(err))
-      failed = failed + 1
-    end
-  end
-  
-  -- Test parse_ansi_sequence
-  test("parse reset code", function()
-    local attrs = parser.parse_ansi_sequence('0')
-    assert(attrs.reset == true, "Should parse reset code")
-  end)
-  
-  test("parse foreground color", function()
-    local attrs = parser.parse_ansi_sequence('31')
-    assert(attrs.fg == 'red', "Should parse red foreground")
-  end)
-  
-  test("parse background color", function()
-    local attrs = parser.parse_ansi_sequence('41')
-    assert(attrs.bg == 'red', "Should parse red background")
-  end)
-  
-  test("parse bold attribute", function()
-    local attrs = parser.parse_ansi_sequence('1')
-    assert(attrs.bold == true, "Should parse bold attribute")
-  end)
-  
-  test("parse combined codes", function()
-    local attrs = parser.parse_ansi_sequence('1;31;42')
-    assert(attrs.bold == true, "Should parse bold")
-    assert(attrs.fg == 'red', "Should parse red foreground")
-    assert(attrs.bg == 'green', "Should parse green background")
-  end)
+local this_file = debug.getinfo(1, 'S').source:sub(2)
+local test_dir = vim.fn.fnamemodify(this_file, ':h')
+local root_dir = vim.fn.fnamemodify(test_dir, ':h')
 
-  test("parse foreground reset code", function()
-    local attrs = parser.parse_ansi_sequence('39')
-    assert(attrs.fg == '__reset__', "Should parse foreground reset code")
-  end)
+package.path = package.path
+  .. ';' .. root_dir .. '/lua/?.lua'
+  .. ';' .. root_dir .. '/lua/?/init.lua'
+  .. ';' .. test_dir .. '/?.lua'
 
-  test("parse background reset code", function()
-    local attrs = parser.parse_ansi_sequence('49')
-    assert(attrs.bg == '__reset__', "Should parse background reset code")
-  end)
+local harness = require('harness')
 
-  test("parse combined codes with foreground reset", function()
-    local attrs = parser.parse_ansi_sequence('33;41;39')
-    assert(attrs.fg == '__reset__', "Should reset foreground")
-    assert(attrs.bg == 'red', "Should preserve red background")
-  end)
-
-  test("parse combined codes with background reset", function()
-    local attrs = parser.parse_ansi_sequence('33;41;49')
-    assert(attrs.fg == 'yellow', "Should preserve yellow foreground")
-    assert(attrs.bg == '__reset__', "Should reset background")
-  end)
-  
-  -- Test find_ansi_sequences
-  test("find single sequence", function()
-    local text = 'Hello \27[31mworld\27[0m!'
-    local sequences = parser.find_ansi_sequences(text)
-    assert(#sequences == 2, "Should find 2 sequences")
-    assert(sequences[1].attrs.fg == 'red', "Should find red color")
-    assert(sequences[2].attrs.reset == true, "Should find reset")
-  end)
-  
-  test("find multiple sequences", function()
-    local text = '\27[31mRed\27[0m \27[32mGreen\27[0m'
-    local sequences = parser.find_ansi_sequences(text)
-    assert(#sequences == 4, "Should find 4 sequences")
-    assert(sequences[1].attrs.fg == 'red', "Should find red")
-    assert(sequences[3].attrs.fg == 'green', "Should find green")
-  end)
-
-  test("find partial reset sequences", function()
-    local text = '\27[33;41mYellow on red\27[39m default fg\27[49m default bg\27[0m'
-    local sequences = parser.find_ansi_sequences(text)
-    assert(#sequences == 4, "Should find 4 sequences")
-    assert(sequences[1].attrs.fg == 'yellow', "Should find yellow foreground")
-    assert(sequences[1].attrs.bg == 'red', "Should find red background")
-    assert(sequences[2].attrs.fg == '__reset__', "Should find foreground reset")
-    assert(sequences[3].attrs.bg == '__reset__', "Should find background reset")
-    assert(sequences[4].attrs.reset == true, "Should find final reset")
-  end)
-  
-  test("handle plain text", function()
-    local text = 'Plain text without colors'
-    local sequences = parser.find_ansi_sequences(text)
-    assert(#sequences == 0, "Should find no sequences")
-  end)
-  
-  print("\nTest Results:")
-  print("Passed: " .. passed)
-  print("Failed: " .. failed)
-  
-  if failed > 0 then
-    os.exit(1)
-  else
-    print("All tests passed!")
-  end
+for _, spec in ipairs({ 'parser_spec', 'init_spec' }) do
+  package.loaded[spec] = nil
+  require(spec)
 end
 
-run_parser_tests()
+print('Running ansi.nvim tests...\n')
+harness.run()
+print('All tests passed!')
