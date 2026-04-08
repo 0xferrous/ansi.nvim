@@ -16,6 +16,7 @@ Demo shown using [`./test_ansi_real.txt`](./test_ansi_real.txt).
 - Supports text attributes (bold, italic, underline)
 - Real-time highlighting updates as you edit
 - Configurable auto-enable for specific filetypes
+- Optional auto-enable for content read from stdin
 
 ## Installation
 
@@ -26,8 +27,9 @@ Demo shown using [`./test_ansi_real.txt`](./test_ansi_real.txt).
   '0xferrous/ansi.nvim',
   config = function()
     require('ansi').setup({
-      auto_enable = false,  -- Auto-enable for configured filetypes
-      filetypes = { 'log', 'ansi' },  -- Filetypes to auto-enable
+      auto_enable = false,        -- Auto-enable for configured filetypes
+      auto_enable_stdin = false,  -- Auto-enable for piped stdin content
+      filetypes = { 'log', 'ansi' },
     })
   end
 }
@@ -75,7 +77,8 @@ local ansi = require('ansi')
 -- Setup with custom config
 ansi.setup({
   auto_enable = true,
-  filetypes = { 'log', 'ansi', 'term' }
+  auto_enable_stdin = true,
+  filetypes = { 'log', 'ansi', 'term' },
 })
 
 -- Manual control
@@ -90,14 +93,38 @@ ansi.toggle()    -- Toggle for current buffer
 require('ansi').setup({
   -- Automatically enable for configured filetypes
   auto_enable = false,
-  
+
+  -- Automatically enable when buffer content was read from stdin
+  -- Useful for commands like: cat file.log | nvim -
+  auto_enable_stdin = false,
+
   -- Filetypes to auto-enable when auto_enable is true
   filetypes = { 'log', 'ansi' },
-  
+
   -- Color theme: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark', 'gruvbox', 'terminal'
   theme = 'gruvbox',
 })
 ```
+
+### `auto_enable_stdin`
+
+Set `auto_enable_stdin = true` to automatically enable ANSI rendering for buffers populated from stdin.
+
+Example:
+
+```bash
+printf '\033[31mred\033[0m\n' | nvim -
+```
+
+With this config:
+
+```lua
+require('ansi').setup({
+  auto_enable_stdin = true,
+})
+```
+
+ANSI rendering will be enabled automatically after Neovim finishes reading stdin.
 
 ### Color Themes
 
@@ -174,7 +201,7 @@ Then run `:AnsiEnable` to see the colors rendered.
 
 ```bash
 # Run unit tests
-nvim --headless -c "luafile tests/run_tests.lua" -c "qa"
+just test
 
 # Run linting
 luacheck lua/ --globals vim
