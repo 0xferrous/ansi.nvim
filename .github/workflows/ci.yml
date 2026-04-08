@@ -55,6 +55,7 @@ jobs:
       run: |
         nvim --version
         nvim --headless -c "luafile tests/run_tests.lua" -c "qa!"
+        nvim --headless -c "luafile tests/init_spec.lua" -c "qa!"
         
     - name: Test plugin loading
       run: |

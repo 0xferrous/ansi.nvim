@@ -4,6 +4,7 @@ local M = {}
 
 M.config = {
   auto_enable = false,
+  auto_enable_stdin = false,
   filetypes = { 'log', 'ansi' },
   -- Options: 'classic', 'modern', 'catppuccin', 'dracula', 'onedark',
   -- 'gruvbox', 'gruvbox_dark', 'gruvbox_light', 'terminal'
@@ -14,10 +15,22 @@ function M.setup(opts)
   M.config = vim.tbl_deep_extend('force', M.config, opts or {})
 
   if M.config.auto_enable then
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = M.config.filetypes,
-      callback = function()
-        M.enable()
+    -- Set up autocmd for filetypes
+    if #M.config.filetypes > 0 then
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = M.config.filetypes,
+        callback = function()
+          M.enable()
+        end,
+      })
+    end
+  end
+
+  if M.config.auto_enable_stdin then
+    -- Set up autocmd for piped content from stdin
+    vim.api.nvim_create_autocmd('StdinReadPost', {
+      callback = function(args)
+        M.enable(args.buf)
       end,
     })
   end
