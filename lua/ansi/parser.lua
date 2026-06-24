@@ -40,13 +40,8 @@ M.bg_colors = {
 
 function M.parse_ansi_sequence(sequence)
   local codes = {}
-  for code in sequence:gmatch('%d+') do
-    table.insert(codes, tonumber(code))
-  end
-
-  -- An SGR sequence with no parameters (ESC[m) is equivalent to ESC[0m (reset).
-  if #codes == 0 then
-    table.insert(codes, 0)
+  for param in (sequence .. ';'):gmatch('(.-);') do
+    table.insert(codes, param == '' and 0 or tonumber(param))
   end
 
   local attrs = {

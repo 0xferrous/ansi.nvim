@@ -12,6 +12,25 @@ describe('ANSI Parser', function()
       assert.is_true(attrs.reset)
     end)
 
+    it('parses leading omitted parameter as reset', function()
+      local attrs = parser.parse_ansi_sequence(';31')
+      assert.is_true(attrs.reset)
+      assert.are.equal('red', attrs.fg)
+    end)
+
+    it('parses trailing omitted parameter as reset', function()
+      local attrs = parser.parse_ansi_sequence('31;')
+      assert.is_true(attrs.reset)
+      assert.are.equal(nil, attrs.fg)
+    end)
+
+    it('parses repeated omitted parameters as resets', function()
+      local attrs = parser.parse_ansi_sequence('31;;1')
+      assert.is_true(attrs.reset)
+      assert.are.equal(nil, attrs.fg)
+      assert.is_true(attrs.bold)
+    end)
+
     it('parses foreground colors', function()
       local attrs = parser.parse_ansi_sequence('31')
       assert.are.equal('red', attrs.fg)
@@ -105,6 +124,17 @@ describe('ANSI Parser', function()
       assert.are.equal(2, #sequences)
       assert.are.equal('yellow', sequences[1].attrs.fg)
       assert.is_true(sequences[2].attrs.reset)
+    end)
+
+    it('treats omitted SGR parameters as resets', function()
+      local text = '\27[;31mred after reset \27[31;mplain after reset'
+      local sequences = parser.find_ansi_sequences(text)
+
+      assert.are.equal(2, #sequences)
+      assert.is_true(sequences[1].attrs.reset)
+      assert.are.equal('red', sequences[1].attrs.fg)
+      assert.is_true(sequences[2].attrs.reset)
+      assert.are.equal(nil, sequences[2].attrs.fg)
     end)
 
     it('handles text without sequences', function()
