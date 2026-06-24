@@ -7,6 +7,11 @@ describe('ANSI Parser', function()
       assert.is_true(attrs.reset)
     end)
 
+    it('parses empty parameter list as reset', function()
+      local attrs = parser.parse_ansi_sequence('')
+      assert.is_true(attrs.reset)
+    end)
+
     it('parses foreground colors', function()
       local attrs = parser.parse_ansi_sequence('31')
       assert.are.equal('red', attrs.fg)
@@ -91,6 +96,15 @@ describe('ANSI Parser', function()
       assert.are.equal('__reset__', sequences[2].attrs.fg)
       assert.are.equal('__reset__', sequences[3].attrs.bg)
       assert.is_true(sequences[4].attrs.reset)
+    end)
+
+    it('treats a bare ESC[m as a reset', function()
+      local text = '\27[33mabc123\27[m plain'
+      local sequences = parser.find_ansi_sequences(text)
+
+      assert.are.equal(2, #sequences)
+      assert.are.equal('yellow', sequences[1].attrs.fg)
+      assert.is_true(sequences[2].attrs.reset)
     end)
 
     it('handles text without sequences', function()

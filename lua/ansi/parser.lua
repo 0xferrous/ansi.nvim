@@ -44,6 +44,11 @@ function M.parse_ansi_sequence(sequence)
     table.insert(codes, tonumber(code))
   end
 
+  -- An SGR sequence with no parameters (ESC[m) is equivalent to ESC[0m (reset).
+  if #codes == 0 then
+    table.insert(codes, 0)
+  end
+
   local attrs = {
     fg = nil,
     bg = nil,
